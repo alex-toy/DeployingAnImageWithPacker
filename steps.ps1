@@ -20,14 +20,14 @@ $subscriptionfile = '.\subscription.json'
 az account show --query "{ subscription_id: id }" | Out-File $subscriptionfile
 $Global:subscription_id = (Get-Content $subscriptionfile -Raw | ConvertFrom-Json).subscription_id
 
-$demofile = '.\ubuntu.json'
-
+$demofile = '.\demo.json'
 $myJson = Get-Content $demofile -Raw | ConvertFrom-Json 
-$myJson.builders[0].client_id = $credentials.client_id
-$myJson.builders[0].client_secret = $credentials.client_secret
-$myJson.builders[0].tenant_id = $credentials.tenant_id
-$myJson.builders[0].subscription_id = $subscription_id
+$myJson.variables.client_id = $credentials.client_id
+$myJson.variables.client_secret = $credentials.client_secret
+$myJson.variables.tenant_id = $credentials.tenant_id
+$myJson.variables.subscription_id = $subscription_id
 $myJson.builders[0].managed_image_resource_group_name = $RGName
+$myJson.builders[0].build_resource_group_name = $RGName
 $myJson | ConvertTo-Json -Depth 4 | Out-File $demofile -Encoding Ascii -Force
 
 az ad sp create-for-rbac --name alexei-service-principal
